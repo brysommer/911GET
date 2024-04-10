@@ -38,7 +38,6 @@ const getProductData = async(productLink) => {
   try {
     const response = await axios.get(productLink);
     const result = processProductElements(response.data);
-    console.log(result)
     return result;
   } catch (error) {
     console.error('Помилка при отриманні данних за посиланням:', productLink, error);
