@@ -49,11 +49,12 @@ export const run911 = async () => {
 
     for (let i = 0; i < links.length; i++) {
       const productLink = links[i];  
-      if (i % 1000 === 0) {
+      if (i % 100 === 0) {
         logger.info(`911 обробляє елемент ${i}`); 
       }
         try {
           const data = await getProductData(productLink);
+            if (!data.producer) data={ producer: 'Виробник' }
             if (!data.price) return;
             const isCreated = await findDrugById(data.id);
             if (isCreated) {
