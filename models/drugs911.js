@@ -33,6 +33,11 @@ Drugs911.init({
         type: DataTypes.STRING,
         allowNull: true,
         unique: false
+    },
+    link: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        unique: false
     }
 }, {
     freezeTableName: false,

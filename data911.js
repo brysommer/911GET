@@ -4,9 +4,10 @@ import {  createNewDrug, updateDrugById,
 import { logger } from './logger/index.js';
 import links from './linksDb.js';
 import { JSDOM } from 'jsdom';
+import parseJsonSafely from './plugins/fixjson.js'
 
 
-function processProductElements(htmlString) {
+function processProductElements(htmlString, productLink) {
   const dom = new JSDOM(htmlString);
   const document = dom.window.document;
 
@@ -14,16 +15,16 @@ function processProductElements(htmlString) {
   
   for (const scriptElement of scriptElements) {
       const scriptText = scriptElement.textContent.trim();
-      
-      const jsonData = JSON.parse(scriptText);
-      
+      const jsonData = parseJsonSafely(scriptText);
       if (jsonData['@type'] === 'Product') {
+  
           return {
               name: jsonData?.name,
               id: jsonData?.sku,
               producer: jsonData?.category?.manufacturer,
               price: jsonData?.offers?.price,
-              pharmacy_name: jsonData?.offers?.seller?.name
+              pharmacy_name: jsonData?.offers?.seller?.name,
+              link: productLink
           };
       }
   }
@@ -37,7 +38,7 @@ function processProductElements(htmlString) {
 const getProductData = async(productLink) => {
   try {
     const response = await axios.get(productLink);
-    const result = processProductElements(response.data);
+    const result = processProductElements(response.data, productLink);
     return result;
   } catch (error) {
     console.error('Помилка при отриманні данних за посиланням:', productLink, error);
@@ -46,16 +47,16 @@ const getProductData = async(productLink) => {
 }
 
 export const run911 = async () => {
-
-    for (let i = 0; i < links.length; i++) {
+    console.log(links.length);
+    for (let i = 500; i < links.length; i++) {
       const productLink = links[i];  
       if (i % 100 === 0) {
         logger.info(`911 обробляє елемент ${i}`); 
       }
         try {
-          const data = await getProductData(productLink);
-            if (!data.producer) data={ producer: 'Виробник' }
-            if (!data.price) return;
+          let data = await getProductData(productLink);
+            if (!data.producer) data.producer= 'Виробник';
+            if (!data.price) console.log(productLink , data);
             const isCreated = await findDrugById(data.id);
             if (isCreated) {
               await updateDrugById(data.id, data.price)
@@ -66,7 +67,8 @@ export const run911 = async () => {
                 drug_producer: data.producer,
                 pharmacy_name: data.pharmacy_name,
                 price: data.price,
-                availability_status: 'Забронювати',   
+                availability_status: 'Забронювати',
+                link: data.link   
               })
             }
   
