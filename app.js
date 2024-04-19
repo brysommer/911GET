@@ -5,7 +5,7 @@ import { run911 } from './data911.js';
 import { logger } from './logger/index.js';
 import fs from 'fs';
 
-//const sharedFolderPath = '../price/SynologyDrive/';
+const sharedFolderPath = '../price/SynologyDrive/';
 let old911;
 
 const main = async () => {
@@ -44,7 +44,7 @@ const writeArrayToXLSX = (arrayData, xlsxFilePath) => {
   const workbook = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(workbook, worksheet, "Data");
 
-  XLSX.writeFile(workbook, xlsxFilePath);
+  XLSX.writeFile(workbook, sharedFolderPath + xlsxFilePath);
 
   logger.info(`Записано ${arrayData.length} элементів в price911`);
   
@@ -78,7 +78,13 @@ async function run() {
       ])
     }
 
-    if(old911) fs.unlink(sharedFolderPath + old911);
+    if(old911) {
+      try {
+        fs.unlink(sharedFolderPath + old911);
+      } catch (e) {
+        logger.error(911 + e);
+      }
+    } 
 
     const date = new Date();
     const filename = date.toISOString().replace(/T/g, "_").replace(/:/g, "-");
