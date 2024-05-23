@@ -73,7 +73,7 @@ async function run() {
         el.drug_producer,
         el.pharmacy_name,
         el.price,
-        'inStock',
+        el.availability_status,
         el.updatedAt
       ])
     }

@@ -24,7 +24,8 @@ function processProductElements(htmlString, productLink) {
               producer: jsonData?.category?.manufacturer,
               price: jsonData?.offers?.price,
               pharmacy_name: jsonData?.offers?.seller?.name,
-              link: productLink
+              link: productLink,
+              availability_status: jsonData?.offers?.availability === "http://schema.org/InStock" ? "inStock" : "OutOfStock",
           };
       }
   }
@@ -50,16 +51,16 @@ export const run911 = async () => {
     console.log(links.length);
     for (let i = 500; i < links.length; i++) {
       const productLink = links[i];  
-      if (i % 100 === 0) {
+      if (i % 1000 === 0) {
         logger.info(`911 обробляє елемент ${i}`); 
       }
         try {
           let data = await getProductData(productLink);
             if (!data.producer) data.producer= 'Виробник';
             if (!data.price) console.log(productLink , data);
-            const isCreated = await findDrugById(data.id);
+            const isCreated = await findDrugById(data.drug_id);
             if (isCreated) {
-              await updateDrugById(data.id, data.price)
+              await updateDrugById(data.drug_id, data.price, data.availability_status)
             } else {
               await createNewDrug({
                 drug_id: data.id,
@@ -67,7 +68,7 @@ export const run911 = async () => {
                 drug_producer: data.producer,
                 pharmacy_name: data.pharmacy_name,
                 price: data.price,
-                availability_status: 'Забронювати',
+                availability_status: data.availability_status,
                 link: data.link   
               })
             }
