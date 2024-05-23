@@ -58,9 +58,9 @@ export const run911 = async () => {
           let data = await getProductData(productLink);
             if (!data.producer) data.producer= 'Виробник';
             if (!data.price) console.log(productLink , data);
-            const isCreated = await findDrugById(data.drug_id);
+            const isCreated = await findDrugById(data.id);
             if (isCreated) {
-              await updateDrugById(data.drug_id, data.price, data.availability_status)
+              await updateDrugById(data.id, data.price, data.availability_status)
             } else {
               await createNewDrug({
                 drug_id: data.id,

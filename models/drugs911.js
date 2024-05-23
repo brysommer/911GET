@@ -59,7 +59,7 @@ const createNewDrug = async (drugData) => {
 
 
 const updateDrugById = async (id, price, availability_status) => {
-    const res = await Drugs911.update({ price, availability_status } , { where: { id } });
+    const res = await Drugs911.update({ price, availability_status } , { where: { drug_id: id } });
     if (res[0]) {
         return res[0];
     } 
