@@ -49,7 +49,7 @@ const getProductData = async(productLink) => {
 
 export const run911 = async () => {
     console.log(links.length);
-    for (let i = 500; i < links.length; i++) {
+    for (let i = 0; i < links.length; i++) {
       const productLink = links[i];  
       if (i % 1000 === 0) {
         logger.info(`911 обробляє елемент ${i}`); 
