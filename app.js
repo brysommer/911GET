@@ -53,7 +53,7 @@ const writeArrayToXLSX = (arrayData, xlsxFilePath) => {
 async function run() {
   
   try {
-    //await run911();
+    await run911();
     let csvData = [[
       'id',
       'drug_id',
