@@ -76,7 +76,7 @@ export const run911 = async () => {
         } catch (error) {
           logger.error(`911 error: ${error}`)
         }
-        await new Promise(resolve => setTimeout(resolve, 3000));
+        await new Promise(resolve => setTimeout(resolve, 500));
     }
 }
 
