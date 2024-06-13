@@ -32,13 +32,19 @@ function processProductElements(htmlString, productLink) {
   return null;
 }
 
+const regionCode = {
+  lviv: 443,
+  dolyna: 246
+}
 
-
-
-
-const getProductData = async(productLink) => {
+const getProductData = async(productLink, region) => {
   try {
-    const response = await axios.get(productLink);
+    const response = await axios.get(productLink, 
+      {
+          headers: {
+              "Cookie": `wucmf_region=${region}`,
+          }
+      });
     const result = processProductElements(response.data, productLink);
     return result;
   } catch (error) {
@@ -55,7 +61,7 @@ export const run911 = async () => {
         logger.info(`911 обробляє елемент ${i}`); 
       }
         try {
-          let data = await getProductData(productLink);
+          let data = await getProductData(productLink, regionCode.lviv);
             if (!data.producer) data.producer= 'Виробник';
             if (!data.price) console.log(productLink , data);
             const isCreated = await findDrugById(data.id);
