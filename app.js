@@ -3,7 +3,7 @@ import { sequelize } from './models/sequelize.js';
 import { findALLDrugs } from './models/drugs911.js';
 import { run911 } from './data911.js';
 import { logger } from './logger/index.js';
-import fs from 'fs';
+import { promises as fs } from 'fs';
 
 const sharedFolderPath = '../price/SynologyDrive/';
 let old911;
@@ -80,7 +80,7 @@ async function run() {
 
     if(old911) {
       try {
-        fs.unlink(sharedFolderPath + old911);
+        await fs.unlink(sharedFolderPath + old911);
       } catch (e) {
         logger.error(911 + e);
       }
